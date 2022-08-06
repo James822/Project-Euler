@@ -78,7 +78,7 @@ public:
 };
 
 
-// this is the most naive and brute force method, it simply loops through all ten million numbers and then checks to see if it reaches 89, and if it does, it increments a counter.
+// this is the most naive and brute-force approach, it simply loops through all ten million numbers and then checks to see if it reaches 89, and if it does, it increments a counter.
 class BruteForceMethod : public Method {
 private:
    u32 solve() const {
@@ -124,7 +124,7 @@ public:
 };
 
 
-// this is similar to the above method, but it also makes use of a cache that is updated every loop iteration to include numbers that we know will reach 89, which speed things up a bit.
+// This is similar to the above method, but it also makes use of a cache that is updated every loop iteration to include numbers that we know will reach 89, which speeds things up a bit.
 class BruteForceMethodCached : public Method {
 private:
    u32 solve() const
@@ -160,14 +160,10 @@ private:
 	    for(u32 i = 0; i < chain_numbers.size(); ++i) {
 	       numbers_that_goto_1[chain_numbers[i]] = true;
 	    }
-	    // numbers_that_goto_1.insert(numbers_that_goto_1.end(),
-	    // 			       chain_numbers.begin(), chain_numbers.end());
 	 } else {
 	    for(u32 i = 0; i < chain_numbers.size(); ++i) {
 	       numbers_that_goto_89[chain_numbers[i]] = true;
 	    }
-	    // numbers_that_goto_89.insert(numbers_that_goto_89.end(),
-	    // 			       chain_numbers.begin(), chain_numbers.end());
 	 }
       }
 
@@ -189,7 +185,7 @@ private:
    
    u32 solve() const
    {
-      bool squigits_to_1[1024]; // since there are much less squigits that go to 1, we simply only keep track of these, and if a number's squigit is NOT in here, then it goes to 89, so it should be fast to check this small vector.
+      bool squigits_to_1[1024]; // since there are much less squigits that go to 1, we simply only keep track of these, and if a number's squigit is NOT in here, then it goes to 89, so it should be fast to check this small array.
 
       for(u32 i = 1; i <= 567; ++i) {
 	 u32 val{i};
@@ -227,13 +223,12 @@ public:
 
 /*
 All the other methods have been ignoring the fact that several combinations of numbers produce the same squigit, such as: [10, 1000, 1000], or [57, 705, 7005, 5007]
-We can exploit this by enumerating all possible combinations and then checking to see if a given combination reaches 89 eventually, the trick will be to figure out how many starting numbers a given combination corresponds to. We also need to figure out how to enumerate all possible combinations, NOT permutations, which should shrink how many iterations our main loop will be.
+We can exploit this by enumerating all possible combinations and then checking to see if a given combination reaches 89 eventually, the trick will be to figure out how many starting numbers a given combination corresponds to. We also need to figure out how to enumerate all possible combinations, NOT permutations, which should shrink how many iterations our main loop will be by a large percentage.
 
-Inspired from the recursive method described here: "https://stackoverflow.com/questions/12991758/creating-all-possible-k-combinations-of-n-items-in-c", we generate all combinations and then iterate over them, which turns out to be 11440 combinations! 11440 is much less than 10,000,000 to loop over - and then with each combination we compute to see if it goes to 89 using the squigit method, and then if it does, we generate the permutations from this combination which gives us how many starting numbers this combination perumatates to.
+Inspired from the recursive method described here: "https://stackoverflow.com/questions/12991758/creating-all-possible-k-combinations-of-n-items-in-c", we generate all combinations and then iterate over them, which turns out to be 11440 combinations! 11440 is much less than 10,000,000 to loop over - and then with each combination we compute to see if it goes to 89 using the squigit method, and then if it does, we generate the permutations from this combination which gives us how many starting numbers this combination permutates to.
 
-Once we have all combinations, we'll need to then figure out if it runs to 89 (that's easy, we'll use the squigits method), and then we'll need to figure out how many permutations we can make from these combinatinos.
-We don't have a clean permutation formula because repeated contiguous elements are indistinguishable, such as 1111, it doesn't matter what order those 1's are in, it equals the same.
-Using this post on math stack exchange: "https://math.stackexchange.com/questions/2005441/possible-numbers-from-given-numbers-using-permutations-and-combinaitions", I figured out how to calulate the permutations using the "rule of product", and with this we have our DigitsMethod which is the fastest and most efficient I was able to come up with.
+Once we have all combinations, we'll need to then figure out if it runs to 89 (that's easy, we'll use the squigits method), and then we'll need to figure out how many permutations we can make from these combinations
+We don't have a clean permutation formula because repeated contiguous elements are indistinguishable, such as 1111. It doesn't matter what order those 1's are in, it equals the same. But using this post on math stack exchange: "https://math.stackexchange.com/questions/2005441/possible-numbers-from-given-numbers-using-permutations-and-combinaitions", I figured out how to calulate the permutations using the "rule of product", and with this we have our DigitsMethod which is the fastest and most efficient I was able to come up with.
  */
 class DigitsMethod : public Method {
    
@@ -294,7 +289,6 @@ private:
 
 	 std::vector<u32> elements_to_use = elements;
 	 for(auto element : elements) {
-	    // print_vector(elements_to_use);
 	    auto combos = combination(elements_to_use, r - 1);
 	    
 	    for(auto combo : combos) {
@@ -388,7 +382,7 @@ int main()
    
    squigits_method.print_results(); // this method is just slighlty faster than the previous, I usually get about a 350 millisecond difference on average
 
-   digits_method.print_results(); // this method is IT! it is staggeringly fast compared to the others, and probably scales much better. On average it takes 45ms to run this!! Wich is a HUGE improvement. (sometimes this method produces 8581147 rather than 8581147, I'm not sure where this off-by-one error is occuring, but I can't be bothered to track it down)
+   digits_method.print_results(); // this method is IT! it is staggeringly fast compared to the others, and probably scales much better. On average it takes 45ms to run this!! Which is a HUGE improvement.
 
    
    /* 
