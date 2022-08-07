@@ -129,10 +129,13 @@ class BruteForceMethodCached : public Method {
 private:
    u32 solve() const
    {
-      std::vector<bool> numbers_that_goto_89{false}; // technically "squigits" that go to 89
-      std::vector<bool> numbers_that_goto_1{false};
-      numbers_that_goto_89.reserve(567); // only need 9^2 * 7 values for squigits since it is 7 digits or under, this idea was not mine however, but it's useful.
-      numbers_that_goto_1.reserve(567);
+      bool numbers_that_goto_89[567];
+      bool numbers_that_goto_1[567];
+      for(u32 i = 0; i < 567; ++i) {
+	 numbers_that_goto_1[i] = false;
+	 numbers_that_goto_89[i] = false;
+      }
+      
       u32 numbers_ending_with_89{0};
    
       for(u32 i = 1; i < TEN_MILLION; ++i) {
@@ -166,6 +169,8 @@ private:
 	    }
 	 }
       }
+
+      // std::cout << numbers_that_goto_89.size() << '\n';
 
       return numbers_ending_with_89;
    }
